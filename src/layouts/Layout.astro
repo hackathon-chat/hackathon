@@ -64,8 +64,8 @@ const { title } = Astro.props;
   .content-area {
     padding: 24px;
     position: relative;
-    z-index: 1; /* 确保在筛选器下方 */
-    /* 确保内容不会滑到固定元素上方 */
+    z-index: 1; /* Ensure content is below filter bar */
+    /* Ensure content doesn't slide over fixed elements */
     isolation: isolate;
   }
 </style>

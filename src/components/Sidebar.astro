@@ -2,10 +2,10 @@
 // src/components/Sidebar.astro
 const currentPath = Astro.url.pathname;
 
-// 判断是否为当前页面的函数
+// Function to determine if current page is active
 function isActive(path: string): boolean {
   if (path === '/') {
-    // Home页面：当路径为 '/' 或者是纯月份筛选（如 '/month/7'）时高亮
+    // Home page: highlight when path is '/' or pure month filter (like '/month/7')
     return currentPath === '/' || currentPath.startsWith('/month/');
   }
   return currentPath.startsWith(path);

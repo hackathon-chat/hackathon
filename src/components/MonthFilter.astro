@@ -4,21 +4,21 @@ import { getCollection } from 'astro:content';
 
 const { currentCategory = null, currentMonth = null } = Astro.props;
 
-// 获取当前日期
+// Get current date
 const now = new Date();
 const currentYear = now.getFullYear();
-const currentMonthNum = now.getMonth() + 1; // getMonth() 返回 0-11，需要 +1
+const currentMonthNum = now.getMonth() + 1; // getMonth() returns 0-11, need +1
 
-// 生成从当前月份开始的未来6个月（固定规则，不受分类影响）
+// Generate next 6 months starting from current month (fixed rule, not affected by category)
 const months = [];
 const monthNames = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-for (let i = 0; i < 7; i++) { // 当前月份 + 未来6个月 = 7个月
+for (let i = 0; i < 7; i++) { // Current month + next 6 months = 7 months
   const targetMonth = currentMonthNum + i;
   const year = currentYear + Math.floor((targetMonth - 1) / 12);
   const month = ((targetMonth - 1) % 12) + 1;
   
-  // 判断是否需要显示年份
+  // Determine if year should be displayed
   const displayName = year === currentYear ? monthNames[month] : `${monthNames[month]} ${year}`;
   
   months.push({
@@ -29,7 +29,7 @@ for (let i = 0; i < 7; i++) { // 当前月份 + 未来6个月 = 7个月
   });
 }
 
-// 安全加载事件数据，用于检查某个月份是否有事件
+// Safely load event data for checking if a month has events
 async function loadEventsWithErrorHandling() {
   try {
     const allEvents = await getCollection('events');
@@ -37,14 +37,14 @@ async function loadEventsWithErrorHandling() {
     
     for (const event of allEvents) {
       try {
-        // 验证必要字段是否存在
+        // Validate required fields exist
         if (event.data && 
             event.data.title && 
             event.data.startDate && 
             event.data.eventType && 
             Array.isArray(event.data.eventType)) {
           
-          // 验证日期格式
+          // Validate date format
           const date = new Date(event.data.startDate);
           if (!isNaN(date.getTime())) {
             validEvents.push(event);
@@ -64,7 +64,7 @@ async function loadEventsWithErrorHandling() {
 
 const allEvents = await loadEventsWithErrorHandling();
 
-// 根据当前分类筛选事件（如果有的话）
+// Filter events by current category (if any)
 let relevantEvents = allEvents;
 try {
   if (currentCategory && currentCategory !== 'featured') {
@@ -93,7 +93,7 @@ try {
   relevantEvents = allEvents;
 }
 
-// 检查每个月份是否有事件，只显示有事件的月份
+// Check which months have events, only show months with events
 const monthsWithEvents = months.filter(monthInfo => {
   try {
     return relevantEvents.some(event => {
@@ -115,22 +115,22 @@ const monthsWithEvents = months.filter(monthInfo => {
   }
 });
 
-// 生成链接的函数
+// Function to generate links
 function generateLink(month = null) {
   try {
     if (currentCategory === 'featured') {
-      // Featured 页面支持月份筛选
+      // Featured page supports month filtering
       if (month) {
         return `/featured/month/${month}`;
       } else {
         return '/featured';
       }
     } else if (currentCategory && month) {
-      // 将 currentCategory 转换为 URL 安全格式
+      // Convert currentCategory to URL-safe format
       const urlSafeCategory = currentCategory.replace(/\s+/g, '').replace(/\./g, '');
       return `/${urlSafeCategory}/month/${month}`;
     } else if (currentCategory) {
-      // 将 currentCategory 转换为 URL 安全格式
+      // Convert currentCategory to URL-safe format
       const urlSafeCategory = currentCategory.replace(/\s+/g, '').replace(/\./g, '');
       return `/${urlSafeCategory}`;
     } else if (month) {

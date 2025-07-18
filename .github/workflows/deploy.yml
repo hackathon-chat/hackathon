@@ -1,4 +1,4 @@
-# 这个文件不需要任何修改
+# This file doesn't need any modifications
 name: Deploy to GitHub Pages
 
 on:

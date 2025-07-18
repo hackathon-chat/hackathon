@@ -5,7 +5,7 @@ import Layout from '../layouts/Layout.astro';
 import EventCard from '../components/EventCard.astro';
 import MonthFilter from '../components/MonthFilter.astro';
 
-// 安全加载事件数据，过滤掉有问题的文件
+// Safely load event data, filter out problematic files
 async function loadEventsWithErrorHandling() {
   try {
     const allEvents = await getCollection('events');
@@ -13,14 +13,14 @@ async function loadEventsWithErrorHandling() {
     
     for (const event of allEvents) {
       try {
-        // 验证必要字段是否存在
+        // Validate required fields exist
         if (event.data && 
             event.data.title && 
             event.data.startDate && 
             event.data.eventType && 
             Array.isArray(event.data.eventType)) {
           
-          // 验证日期格式
+          // Validate date format
           const date = new Date(event.data.startDate);
           if (!isNaN(date.getTime())) {
             validEvents.push(event);
@@ -44,7 +44,7 @@ async function loadEventsWithErrorHandling() {
 
 const allEvents = await loadEventsWithErrorHandling();
 
-// 筛选特色事件
+// Filter featured events
 const featuredEvents = allEvents.filter(event => {
   try {
     return event.data && event.data.featured === true;
@@ -54,19 +54,19 @@ const featuredEvents = allEvents.filter(event => {
   }
 });
 
-// 按时间排序：离现在越近的排在越前面
+// Sort by time: events closer to now appear first
 const sortedFeaturedEvents = featuredEvents.sort((a, b) => {
   try {
     const dateA = new Date(a.data.startDate);
     const dateB = new Date(b.data.startDate);
     const now = new Date();
     
-    // 验证日期有效性
+    // Validate date validity
     if (isNaN(dateA.getTime()) || isNaN(dateB.getTime())) {
       return 0;
     }
     
-    // 计算与当前时间的距离（绝对值）
+    // Calculate distance from current time (absolute value)
     const diffA = Math.abs(dateA.getTime() - now.getTime());
     const diffB = Math.abs(dateB.getTime() - now.getTime());
     

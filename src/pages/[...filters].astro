@@ -5,7 +5,7 @@ import Layout from '../layouts/Layout.astro';
 import EventCard from '../components/EventCard.astro';
 import MonthFilter from '../components/MonthFilter.astro';
 
-// 安全加载事件数据，过滤掉有问题的文件
+// Safely load event data, filter out problematic files
 async function loadEventsWithErrorHandling() {
   try {
     const allEvents = await getCollection('events');
@@ -13,29 +13,29 @@ async function loadEventsWithErrorHandling() {
     
     for (const event of allEvents) {
       try {
-        // 验证必要字段是否存在
+        // Validate required fields exist
         if (event.data && 
             event.data.title && 
             event.data.startDate && 
             event.data.eventType && 
             Array.isArray(event.data.eventType)) {
           
-          // 验证日期格式
-          const date = new Date(event.data.startDate);
-          if (!isNaN(date.getTime())) {
-            validEvents.push(event);
-          } else {
-            console.warn(`Invalid date in event: ${event.id}`);
-          }
+        // Validate date format
+        const date = new Date(event.data.startDate);
+        if (!isNaN(date.getTime())) {
+          validEvents.push(event);
         } else {
-          console.warn(`Missing required fields in event: ${event.id}`);
+          console.warn(`Invalid date in event: ${event.id}`);
         }
-      } catch (error) {
-        console.warn(`Error processing event ${event.id}:`, error);
+      } else {
+        console.warn(`Missing required fields in event: ${event.id}`);
       }
+    } catch (error) {
+      console.warn(`Error processing event ${event.id}:`, error);
     }
-    
-    return validEvents;
+  }
+  
+  return validEvents;
   } catch (error) {
     console.error('Error loading events collection:', error);
     return [];
@@ -44,7 +44,7 @@ async function loadEventsWithErrorHandling() {
 
 export async function getStaticPaths() {
   try {
-    // 定义所有需要的事件类型路径（与 Sidebar 中的链接对应）
+    // Define all required event type paths (corresponding to Sidebar links)
     const eventTypes = [
       'ai',
       'bigdata',
@@ -57,7 +57,7 @@ export async function getStaticPaths() {
     
     const paths = [];
     
-    // 1. 为每个eventType创建单独的路径
+    // 1. Create individual paths for each eventType
     eventTypes.forEach(eventType => {
       paths.push({
         params: { filters: eventType },
@@ -65,13 +65,13 @@ export async function getStaticPaths() {
       });
     });
     
-    // 2. 为featured创建路径
+    // 2. Create path for featured
     paths.push({
       params: { filters: 'featured' },
       props: { eventType: null, month: null, featured: true }
     });
     
-    // 3. 为每个月份创建单独的路径
+    // 3. Create individual paths for each month
     for (let month = 1; month <= 12; month++) {
       paths.push({
         params: { filters: `month/${month}` },
@@ -79,7 +79,7 @@ export async function getStaticPaths() {
       });
     }
     
-    // 4. 为featured和月份组合创建路径
+    // 4. Create paths for featured and month combinations
     for (let month = 1; month <= 12; month++) {
       paths.push({
         params: { filters: `featured/month/${month}` },
@@ -87,7 +87,7 @@ export async function getStaticPaths() {
       });
     }
     
-    // 5. 为每个eventType和月份组合创建路径
+    // 5. Create paths for each eventType and month combination
     eventTypes.forEach(eventType => {
       for (let month = 1; month <= 12; month++) {
         paths.push({
@@ -109,11 +109,11 @@ export async function getStaticPaths() {
 const { eventType, month, featured } = Astro.props;
 const allEvents = await loadEventsWithErrorHandling();
 
-// 根据eventType、month和featured筛选事件
+// Filter events based on eventType, month and featured
 let filteredEvents = allEvents;
 
 try {
-  // 首先根据featured状态筛选
+  // First filter by featured status
   if (featured) {
     filteredEvents = filteredEvents.filter(event => {
       try {
@@ -125,7 +125,7 @@ try {
     });
   }
   
-  // 然后根据eventType筛选
+  // Then filter by eventType
   if (eventType) {
     filteredEvents = filteredEvents.filter(event => {
       try {
@@ -137,7 +137,7 @@ try {
           const normalizedEventType = type.toLowerCase().replace(/\s+/g, '').replace(/\./g, '');
           const normalizedFilterType = eventType.toLowerCase().replace(/\s+/g, '').replace(/\./g, '');
           
-          // 处理特殊映射
+          // Handle special mappings
           if (normalizedFilterType === 'bigdata' && normalizedEventType === 'bigdata') return true;
           if (normalizedFilterType === 'bigdata' && type.toLowerCase() === 'big data') return true;
           if (normalizedFilterType === 'web30' && normalizedEventType === 'web30') return true;
@@ -152,7 +152,7 @@ try {
     });
   }
 
-  // 最后根据月份筛选
+  // Finally filter by month
   if (month) {
     filteredEvents = filteredEvents.filter(event => {
       try {
@@ -169,19 +169,19 @@ try {
   filteredEvents = [];
 }
 
-// 按时间排序：离现在越近的排在越前面
+// Sort by time: events closer to now appear first
 const sortedEvents = filteredEvents.sort((a, b) => {
   try {
     const dateA = new Date(a.data.startDate);
     const dateB = new Date(b.data.startDate);
     const now = new Date();
     
-    // 验证日期有效性
+    // Validate date validity
     if (isNaN(dateA.getTime()) || isNaN(dateB.getTime())) {
       return 0;
     }
     
-    // 计算与当前时间的距离（绝对值）
+    // Calculate distance from current time (absolute value)
     const diffA = Math.abs(dateA.getTime() - now.getTime());
     const diffB = Math.abs(dateB.getTime() - now.getTime());
     
@@ -192,7 +192,7 @@ const sortedEvents = filteredEvents.sort((a, b) => {
   }
 });
 
-// eventType名称映射
+// eventType name mapping
 const eventTypeNames = {
   'ai': 'AI & Machine Learning',
   'big data': 'Big Data & Analytics',
