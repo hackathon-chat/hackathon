@@ -12,7 +12,7 @@ const events = defineCollection({
     url: z.string().url(),
     image: z.string().optional(),
     featured: z.boolean(),
-    eventType: z.array(z.enum(['AI', 'Big Data', 'Cloud', 'Fintech', 'Gaming', 'IoT', 'Web3.0'])),
+    eventType: z.array(z.enum(['AI', 'Big Data', 'Cloud', 'Fintech',  'IoT', 'Web3.0'])),
     region: z.enum(['Americas', 'Asia', 'Europe', 'Other']),
   }),
 });
