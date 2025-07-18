@@ -3,7 +3,10 @@
 ---
 <header class="main-header">
   <div class="logo-area">
-    <a href="/" class="logo">Hackathon.chat</a>
+    <a href="/" class="logo">
+      <img src="/images/logo.png" alt="Hackathon.chat" class="logo-image" />
+      <span class="logo-text">Hackathon.chat</span>
+    </a>
   </div>
   <div class="actions-area">
     <a href="https://x.com/home" class="social-button" title="Twitter" target="_blank" rel="noopener noreferrer">
@@ -41,6 +44,21 @@
     font-size: 1.5rem;
     font-weight: bold;
     text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .logo-image {
+    height: 40px;
+    width: auto;
+    object-fit: contain;
+  }
+  
+  .logo-text {
+    color: var(--yt-text-primary);
+    font-size: 1.5rem;
+    font-weight: bold;
   }
   .actions-area {
     display: flex;

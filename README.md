@@ -25,6 +25,8 @@ Click the "Fork" button in the top-right corner to copy the project to your GitH
 ### Step 2: Add Event Image
 Upload the event image to the `public/images/` directory. Recommended size: 400×225 pixels. Use a descriptive filename based on the event name, e.g., `eth-vietnam-2025.png`
 
+**Note**: If no image is uploaded or the image fails to load, the system will automatically use the default image (`/images/no-images.png`).
+
 ### Step 3: Create Event File and Fill Information
 Create a new `.md` file in the `src/content/events/` directory. Use a descriptive filename based on the event name, e.g., `eth-vietnam-2025.md`
 

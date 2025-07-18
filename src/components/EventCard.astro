@@ -17,7 +17,7 @@ try {
   title = data.title || 'Untitled Event';
   startDate = data.startDate ? new Date(data.startDate) : new Date();
   location = data.location || { city: 'Unknown', country: 'Unknown' };
-  image = data.image || '/images/ai-event.png';
+  image = data.image || '/images/no-images.png';
   featured = data.featured || false;
   eventType = Array.isArray(data.eventType) ? data.eventType : ['General'];
   region = data.region || 'Unknown';
@@ -44,7 +44,7 @@ try {
   title = 'Error Loading Event';
   startDate = new Date();
   location = { city: 'Unknown', country: 'Unknown' };
-  image = '/images/ai-event.png';
+  image = '/images/no-images.png';
   featured = false;
   eventType = ['General'];
   region = 'Unknown';
@@ -79,7 +79,7 @@ const handleClick = () => {
     <img 
       src={image} 
       alt={title}
-      onerror="this.src='/images/ai-event.png'"
+      onerror="this.src='/images/no-images.png'"
     />
   </div>
   
