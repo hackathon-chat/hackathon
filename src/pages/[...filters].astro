@@ -55,44 +55,70 @@ export async function getStaticPaths() {
       'web30'
     ];
     
+    // Define all required region paths
+    const regions = [
+      'americas',
+      'asia',
+      'europe',
+      'other'
+    ];
+    
     const paths = [];
     
     // 1. Create individual paths for each eventType
     eventTypes.forEach(eventType => {
       paths.push({
         params: { filters: eventType },
-        props: { eventType, month: null, featured: false }
+        props: { eventType, region: null, month: null, featured: false }
       });
     });
     
-    // 2. Create path for featured
-    paths.push({
-      params: { filters: 'featured' },
-      props: { eventType: null, month: null, featured: true }
+    // 2. Create individual paths for each region
+    regions.forEach(region => {
+      paths.push({
+        params: { filters: region },
+        props: { eventType: null, region, month: null, featured: false }
+      });
     });
     
-    // 3. Create individual paths for each month
+    // 3. Create path for featured
+    paths.push({
+      params: { filters: 'featured' },
+      props: { eventType: null, region: null, month: null, featured: true }
+    });
+    
+    // 4. Create individual paths for each month
     for (let month = 1; month <= 12; month++) {
       paths.push({
         params: { filters: `month/${month}` },
-        props: { eventType: null, month, featured: false }
+        props: { eventType: null, region: null, month, featured: false }
       });
     }
     
-    // 4. Create paths for featured and month combinations
+    // 5. Create paths for featured and month combinations
     for (let month = 1; month <= 12; month++) {
       paths.push({
         params: { filters: `featured/month/${month}` },
-        props: { eventType: null, month, featured: true }
+        props: { eventType: null, region: null, month, featured: true }
       });
     }
     
-    // 5. Create paths for each eventType and month combination
+    // 6. Create paths for each eventType and month combination
     eventTypes.forEach(eventType => {
       for (let month = 1; month <= 12; month++) {
         paths.push({
           params: { filters: `${eventType}/month/${month}` },
-          props: { eventType, month, featured: false }
+          props: { eventType, region: null, month, featured: false }
+        });
+      }
+    });
+    
+    // 7. Create paths for each region and month combination
+    regions.forEach(region => {
+      for (let month = 1; month <= 12; month++) {
+        paths.push({
+          params: { filters: `${region}/month/${month}` },
+          props: { eventType: null, region, month, featured: false }
         });
       }
     });
@@ -106,10 +132,10 @@ export async function getStaticPaths() {
   }
 }
 
-const { eventType, month, featured } = Astro.props;
+const { eventType, region, month, featured } = Astro.props;
 const allEvents = await loadEventsWithErrorHandling();
 
-// Filter events based on eventType, month and featured
+// Filter events based on eventType, region, month and featured
 let filteredEvents = allEvents;
 
 try {
@@ -147,6 +173,25 @@ try {
         });
       } catch (error) {
         console.warn(`Error filtering by eventType for ${event.id}:`, error);
+        return false;
+      }
+    });
+  }
+
+  // Filter by region
+  if (region) {
+    filteredEvents = filteredEvents.filter(event => {
+      try {
+        if (!event.data.region) {
+          return false;
+        }
+        
+        const normalizedEventRegion = event.data.region.toLowerCase();
+        const normalizedFilterRegion = region.toLowerCase();
+        
+        return normalizedEventRegion === normalizedFilterRegion;
+      } catch (error) {
+        console.warn(`Error filtering by region for ${event.id}:`, error);
         return false;
       }
     });
@@ -205,6 +250,14 @@ const eventTypeNames = {
   'web30': 'Web3.0 & Blockchain'
 };
 
+// region name mapping
+const regionNames = {
+  'americas': 'Americas',
+  'asia': 'Asia',
+  'europe': 'Europe',
+  'other': 'Other'
+};
+
 const monthNames = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 let title = 'Events - Hackathon.chat';
@@ -219,6 +272,12 @@ try {
   } else if (eventType) {
     const displayName = eventTypeNames[eventType] || eventType;
     title = `${displayName} Events - Hackathon.chat`;
+  } else if (region && month) {
+    const displayName = regionNames[region] || region;
+    title = `${displayName} Events in ${monthNames[month]} - Hackathon.chat`;
+  } else if (region) {
+    const displayName = regionNames[region] || region;
+    title = `${displayName} Events - Hackathon.chat`;
   } else if (month) {
     title = `${monthNames[month]} Events - Hackathon.chat`;
   }
@@ -227,7 +286,7 @@ try {
 }
 
 // 确定当前分类，用于传递给MonthFilter
-const currentCategory = featured ? 'featured' : eventType;
+const currentCategory = featured ? 'featured' : eventType || region;
 ---
 <Layout title={title}>
   <MonthFilter currentCategory={currentCategory} currentMonth={month} />

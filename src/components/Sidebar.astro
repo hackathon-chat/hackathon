@@ -10,18 +10,51 @@ function isActive(path: string): boolean {
   }
   return currentPath.startsWith(path);
 }
+
+// Extract current month from URL if present
+function getCurrentMonth(): number | null {
+  const monthMatch = currentPath.match(/\/month\/(\d+)/);
+  return monthMatch ? parseInt(monthMatch[1]) : null;
+}
+
+// Generate link with current month preserved
+function generateCategoryLink(category: string): string {
+  const currentMonth = getCurrentMonth();
+  if (currentMonth) {
+    return `/${category}/month/${currentMonth}`;
+  }
+  return `/${category}`;
+}
+
+// Generate home link with current month preserved
+function generateHomeLink(): string {
+  const currentMonth = getCurrentMonth();
+  if (currentMonth) {
+    return `/month/${currentMonth}`;
+  }
+  return '/';
+}
+
+// Generate featured link with current month preserved
+function generateFeaturedLink(): string {
+  const currentMonth = getCurrentMonth();
+  if (currentMonth) {
+    return `/featured/month/${currentMonth}`;
+  }
+  return '/featured';
+}
 ---
 <aside class="main-sidebar">
   <nav>
     <ul>
       <li>
-        <a href="/" class={isActive('/') ? 'active' : ''}>
+        <a href={generateHomeLink()} class={isActive('/') ? 'active' : ''}>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z" /><path d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z" /></svg>
           <span>Home</span>
         </a>
       </li>
       <li>
-        <a href="/featured" class={isActive('/featured') ? 'active' : ''}>
+        <a href={generateFeaturedLink()} class={isActive('/featured') ? 'active' : ''}>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clip-rule="evenodd" /></svg>
           <span>Featured</span>
         </a>
@@ -32,7 +65,7 @@ function isActive(path: string): boolean {
     
     <ul class="categories-section">
       <li>
-        <a href="/ai" class={isActive('/ai') ? 'active' : ''}>
+        <a href={generateCategoryLink('ai')} class={isActive('/ai') ? 'active' : ''}>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
             <path d="M12,2A2,2 0 0,1 14,4C14,4.74 13.6,5.39 13,5.73V7H14A7,7 0 0,1 21,14H22A1,1 0 0,1 23,15V18A1,1 0 0,1 22,19H21V20A2,2 0 0,1 19,22H5A2,2 0 0,1 3,20V19H2A1,1 0 0,1 1,18V15A1,1 0 0,1 2,14H3A7,7 0 0,1 10,7H11V5.73C10.4,5.39 10,4.74 10,4A2,2 0 0,1 12,2M7.5,13A2.5,2.5 0 0,0 5,15.5A2.5,2.5 0 0,0 7.5,18A2.5,2.5 0 0,0 10,15.5A2.5,2.5 0 0,0 7.5,13M16.5,13A2.5,2.5 0 0,0 14,15.5A2.5,2.5 0 0,0 16.5,18A2.5,2.5 0 0,0 19,15.5A2.5,2.5 0 0,0 16.5,13Z"/>
           </svg>
@@ -40,7 +73,7 @@ function isActive(path: string): boolean {
         </a>
       </li>
       <li>
-        <a href="/bigdata" class={isActive('/bigdata') ? 'active' : ''}>
+        <a href={generateCategoryLink('bigdata')} class={isActive('/bigdata') ? 'active' : ''}>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
             <path d="M12,3C7.58,3 4,4.79 4,7C4,9.21 7.58,11 12,11C16.42,11 20,9.21 20,7C20,4.79 16.42,3 12,3M4,9V12C4,14.21 7.58,16 12,16C16.42,16 20,14.21 20,12V9C20,11.21 16.42,13 12,13C7.58,13 4,11.21 4,9M4,14V17C4,19.21 7.58,21 12,21C16.42,21 20,19.21 20,17V14C20,16.21 16.42,18 12,18C7.58,18 4,16.21 4,14Z"/>
           </svg>
@@ -48,7 +81,7 @@ function isActive(path: string): boolean {
         </a>
       </li>
       <li>
-        <a href="/cloud" class={isActive('/cloud') ? 'active' : ''}>
+        <a href={generateCategoryLink('cloud')} class={isActive('/cloud') ? 'active' : ''}>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
             <path d="M19.35,10.04C18.67,6.59 15.64,4 12,4C9.11,4 6.6,5.64 5.35,8.04C2.34,8.36 0,10.91 0,14A6,6 0 0,0 6,20H19A5,5 0 0,0 24,15C24,12.36 21.95,10.22 19.35,10.04Z"/>
           </svg>
@@ -56,7 +89,7 @@ function isActive(path: string): boolean {
         </a>
       </li>
       <li>
-        <a href="/fintech" class={isActive('/fintech') ? 'active' : ''}>
+        <a href={generateCategoryLink('fintech')} class={isActive('/fintech') ? 'active' : ''}>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
             <path d="M5,6H23V18H5V6M14,9A3,3 0 0,1 17,12A3,3 0 0,1 14,15A3,3 0 0,1 11,12A3,3 0 0,1 14,9M9,8A2,2 0 0,1 7,10V14A2,2 0 0,1 9,16H19A2,2 0 0,1 21,14V10A2,2 0 0,1 19,8H9Z"/>
           </svg>
@@ -64,7 +97,7 @@ function isActive(path: string): boolean {
         </a>
       </li>
       <li>
-        <a href="/iot" class={isActive('/iot') ? 'active' : ''}>
+        <a href={generateCategoryLink('iot')} class={isActive('/iot') ? 'active' : ''}>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
             <path d="M17,17H7V7H17M21,11V9H19V7C19,5.89 18.1,5 17,5H15V3H13V5H11V3H9V5H7C5.89,5 5,5.89 5,7V9H3V11H5V13H3V15H5V17C5,18.1 5.89,19 7,19H9V21H11V19H13V21H15V19H17C18.1,19 19,18.1 19,17V15H21V13H19V11M16,8H8V16H16V8Z"/>
           </svg>
@@ -72,11 +105,48 @@ function isActive(path: string): boolean {
         </a>
       </li>
       <li>
-        <a href="/web30" class={isActive('/web30') ? 'active' : ''}>
+        <a href={generateCategoryLink('web30')} class={isActive('/web30') ? 'active' : ''}>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
             <path d="M6,2L3,6V14A4,4 0 0,0 7,18H17A4,4 0 0,0 21,14V6L18,2H6M6.5,4H17.5L19.5,6.5V14A2,2 0 0,1 17.5,16H6.5A2,2 0 0,1 4.5,14V6.5L6.5,4M11,5V7H13V5H11M7,9V11H9V9H7M11,9V11H13V9H11M15,9V11H17V9H15Z"/>
           </svg>
           <span>Web3.0</span>
+        </a>
+      </li>
+    </ul>
+    
+    <div class="divider"></div>
+    
+    <ul class="categories-section">
+      <li>
+        <a href={generateCategoryLink('americas')} class={isActive('/americas') ? 'active' : ''}>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+            <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M10,8H14V10H10V8M8,11H16V13H8V11M10,14H14V16H10V14Z"/>
+          </svg>
+          <span>Americas</span>
+        </a>
+      </li>
+      <li>
+        <a href={generateCategoryLink('asia')} class={isActive('/asia') ? 'active' : ''}>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+            <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M8,8H16V10H8V8M8,11H16V13H8V11M8,14H16V16H8V14Z"/>
+          </svg>
+          <span>Asia</span>
+        </a>
+      </li>
+      <li>
+        <a href={generateCategoryLink('europe')} class={isActive('/europe') ? 'active' : ''}>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+            <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M9,8H15V10H9V8M8,11H16V13H8V11M9,14H15V16H9V14Z"/>
+          </svg>
+          <span>Europe</span>
+        </a>
+      </li>
+      <li>
+        <a href={generateCategoryLink('other')} class={isActive('/other') ? 'active' : ''}>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+            <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M11,8H13V11H16V13H13V16H11V13H8V11H11V8Z"/>
+          </svg>
+          <span>Other</span>
         </a>
       </li>
     </ul>

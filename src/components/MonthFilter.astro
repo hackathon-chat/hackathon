@@ -64,17 +64,49 @@ async function loadEventsWithErrorHandling() {
 
 const allEvents = await loadEventsWithErrorHandling();
 
+// Define region list for checking
+const regions = ['americas', 'asia', 'europe', 'other'];
+
 // Filter events by current category (if any)
 let relevantEvents = allEvents;
 try {
-  if (currentCategory && currentCategory !== 'featured') {
+  if (currentCategory && currentCategory !== 'featured' && !regions.includes(currentCategory)) {
+    // Filter by eventType
     relevantEvents = allEvents.filter(event => {
       try {
         return event.data.eventType && 
                Array.isArray(event.data.eventType) &&
-               event.data.eventType.some(type => type.toLowerCase() === currentCategory);
+               event.data.eventType.some(type => {
+                 const normalizedEventType = type.toLowerCase().replace(/\s+/g, '').replace(/\./g, '');
+                 const normalizedFilterType = currentCategory.toLowerCase().replace(/\s+/g, '').replace(/\./g, '');
+                 
+                 // Handle special mappings
+                 if (normalizedFilterType === 'bigdata' && normalizedEventType === 'bigdata') return true;
+                 if (normalizedFilterType === 'bigdata' && type.toLowerCase() === 'big data') return true;
+                 if (normalizedFilterType === 'web30' && normalizedEventType === 'web30') return true;
+                 if (normalizedFilterType === 'web30' && type.toLowerCase() === 'web3.0') return true;
+                 
+                 return normalizedEventType === normalizedFilterType;
+               });
       } catch (error) {
-        console.warn(`Error filtering by category for ${event.id}:`, error);
+        console.warn(`Error filtering by eventType for ${event.id}:`, error);
+        return false;
+      }
+    });
+  } else if (regions.includes(currentCategory)) {
+    // Filter by region
+    relevantEvents = allEvents.filter(event => {
+      try {
+        if (!event.data.region) {
+          return false;
+        }
+        
+        const normalizedEventRegion = event.data.region.toLowerCase();
+        const normalizedFilterRegion = currentCategory.toLowerCase();
+        
+        return normalizedEventRegion === normalizedFilterRegion;
+      } catch (error) {
+        console.warn(`Error filtering by region for ${event.id}:`, error);
         return false;
       }
     });
